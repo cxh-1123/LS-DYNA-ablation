@@ -1,0 +1,84 @@
+# =============================================================================
+# .gitignore  --  LS-DYNA + Python project
+# =============================================================================
+# Goal: keep .k / .py / .ps1 / .md sources in git. NEVER commit:
+#   - the Python venv (huge, machine-specific)
+#   - LS-DYNA binary / ASCII output files (regenerable from the .k file)
+#   - LS-PrePost session files
+# =============================================================================
+
+# ----- Python venv / cache / build -----
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ----- LS-DYNA outputs anywhere in the tree -----
+# Whole "results/" directory: solver runs, plots, dumps
+results/
+
+# Binary plot files (d3plot, d3plot01, d3plot02, ...)
+d3plot*
+d3thdt*
+d3iter*
+d3drlf*
+d3eigv*
+d3ssd*
+d3spcm*
+d3acs*
+
+# Restart / dump files
+d3dump*
+runrsf
+d3full*
+d3part*
+
+# ASCII solver logs / status / per-physics outputs
+d3hsp
+messag
+mes[0-9]*
+adapt.msg
+glstat
+matsum
+nodfor
+secforc
+rcforc
+ncforc
+spcforc
+bndout
+deforc
+elout
+tprint
+sleout
+status.out
+status_local*
+spooles.res
+group_file
+hcsv
+*.binout
+binout*
+binout[0-9]*
+kill_by_pid
+scr[0-9]*
+
+# LS-PrePost
+lspost.*
+
+# ----- IDE / OS -----
+.vscode/
+.idea/
+*.tmp
+*.swp
+*~
+Thumbs.db
+.DS_Store
+
+# ----- Misc -----
+*.log
