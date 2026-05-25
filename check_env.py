@@ -39,12 +39,21 @@ if sys.platform == "win32":
 
 SEP = "=" * 64
 RESULTS: list[tuple[str, bool, str]] = []
+WARNINGS: list[tuple[str, str]] = []
 
 
 def record(name: str, ok: bool, detail: str = "") -> None:
     RESULTS.append((name, ok, detail))
     flag = "[ OK ]" if ok else "[FAIL]"
     print(f"  {flag}  {name}")
+    if detail:
+        for line in detail.splitlines():
+            print(f"          {line}")
+
+
+def warn(name: str, detail: str = "") -> None:
+    WARNINGS.append((name, detail))
+    print(f"  [WARN]  {name}")
     if detail:
         for line in detail.splitlines():
             print(f"          {line}")
@@ -58,16 +67,18 @@ def section(title: str) -> None:
 def check_python() -> None:
     section("[1] Python 解释器")
     exe = Path(sys.executable)
-    expected = Path(r"D:\cxh-daima\LS-DYNA-ablation\.venv\Scripts\python.exe")
-    is_venv = exe.resolve() == expected.resolve()
+    project_root = Path(__file__).resolve().parent
+    expected = project_root / ".venv" / "Scripts" / "python.exe"
+    is_venv = expected.is_file() and exe.resolve() == expected.resolve()
+    ok = is_venv or not expected.exists()
     record(
         "当前 Python 解释器路径",
-        is_venv,
+        ok,
         detail=(
             f"sys.executable = {exe}\n"
-            f"期望路径       = {expected}\n"
+            f"项目 venv 路径 = {expected}\n"
             f"sys.version    = {sys.version.split()[0]}"
-            + ("" if is_venv else "\n警告：未使用项目 venv，PyDYNA 可能不可用！")
+            + ("" if is_venv else "\n提示：未使用项目 venv；V1 直接调用 LS-DYNA，仍可运行。")
         ),
     )
 
@@ -78,7 +89,10 @@ def check_ansys_dyna_core() -> None:
     try:
         import ansys.dyna.core as dyna_core
     except ImportError as exc:
-        record("import ansys.dyna.core", False, f"ImportError: {exc}")
+        warn(
+            "import ansys.dyna.core",
+            f"ImportError: {exc}\nPyDYNA 是可选项；当前 V1 脚本直接调用 lsdyna，不依赖它。",
+        )
         return
     record(
         "import ansys.dyna.core",
@@ -94,10 +108,9 @@ def check_pydyna_version() -> None:
         ver = pkg_version("ansys-dyna-core")
         record("ansys-dyna-core (importlib.metadata)", True, f"版本 = {ver}")
     except PackageNotFoundError:
-        record(
+        warn(
             "ansys-dyna-core (importlib.metadata)",
-            False,
-            "未找到包 ansys-dyna-core",
+            "未找到包 ansys-dyna-core；只有需要 PyDYNA API 时才必须安装。",
         )
 
     try:
@@ -113,7 +126,7 @@ def check_pydyna_version() -> None:
         else:
             record(
                 "ansys.dyna.core.__version__",
-                False,
+                True,
                 "模块未暴露 __version__（不影响使用）",
             )
     except ImportError:
@@ -189,6 +202,10 @@ def main() -> int:
         for name in failed:
             print(f"    - {name}")
         return 1
+    if WARNINGS:
+        print("  提示项（不阻止 V1 运行）：")
+        for name, _ in WARNINGS:
+            print(f"    - {name}")
     print("  全部通过，环境就绪。")
     return 0
 
