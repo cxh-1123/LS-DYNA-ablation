@@ -8,5 +8,8 @@ ep_2p0uj,2,30,35,0.5,6.910872e+03,5,models/v17_30ps_local/v17_ep_2p0uj.k,true,80
 ep_2p2uj,2.2,30,35,0.5,7.601959e+03,5,models/v17_30ps_local/v17_ep_2p2uj.k,true,80,92,7533,7360,10.0000,7453,threshold refinement: low vapor-onset bracket
 ep_2p5uj,2.5,30,35,0.5,8.638590e+03,5,models/v17_30ps_local/v17_ep_2p5uj.k,true,80,92,7533,7360,10.0000,7453,threshold refinement: vapor-onset bracket
 ep_3p0uj,3,30,35,0.5,1.036631e+04,5,models/v17_30ps_local/v17_ep_3p0uj.k,true,80,92,7533,7360,10.0000,7453,threshold refinement: mid vapor-onset bracket
+ep_3p05uj,3.05,30,35,0.5,1.053908e+04,5,models/v17_30ps_local/v17_ep_3p05uj.k,true,80,92,7533,7360,10.0000,7453,threshold refinement: near vapor threshold estimate
+ep_3p1uj,3.1,30,35,0.5,1.071185e+04,5,models/v17_30ps_local/v17_ep_3p1uj.k,true,80,92,7533,7360,10.0000,7453,threshold refinement: vapor threshold confirmation
+ep_3p2uj,3.2,30,35,0.5,1.105740e+04,5,models/v17_30ps_local/v17_ep_3p2uj.k,true,80,92,7533,7360,10.0000,7453,threshold refinement: above vapor threshold check
 ep_4p0uj,4,30,35,0.5,1.382174e+04,5,models/v17_30ps_local/v17_ep_4p0uj.k,true,80,92,7533,7360,10.0000,7453,threshold refinement: high vapor-onset bracket
 ep_5p0uj,5,30,35,0.5,1.727718e+04,5,models/v17_30ps_local/v17_ep_5p0uj.k,true,80,92,7533,7360,10.0000,7453,above TTM vapor threshold (Tl~5237K at 5.0uJ)
