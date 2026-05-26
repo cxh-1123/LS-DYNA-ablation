@@ -1,0 +1,5 @@
+case,status,Tmax_peak_K,t_peak_ns,t_peak_ps,max_melt_depth_um,max_melt_radius_um,max_vapor_depth_um,max_vapor_radius_um,max_crater_depth_um,max_crater_radius_um,final_regime,peak_at_axis_top,peak_warning
+ep_1p0uj,OK,1361.60,0.030327,30.327,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,no melt,yes,
+ep_2p0uj,OK,2422.16,0.030103,30.103,0.0357,16.1357,0.0000,0.0000,0.0000,0.0000,melt only,yes,
+ep_5p0uj,OK,5604.48,0.030029,30.029,0.1375,28.6722,0.0420,17.3850,0.0420,17.3850,vapor/ablation candidate,yes,
+ep_0p5uj,not run,,,,,,,,,,missing,,

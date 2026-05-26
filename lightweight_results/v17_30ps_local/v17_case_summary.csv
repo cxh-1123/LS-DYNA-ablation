@@ -1,0 +1,12 @@
+case,Ep_uJ,tau_ps,ran_lsdyna,status,normal_termination,T_peak_K,t_peak_ns,node_at_peak,peak_at_axis_top,melt_reached,vapor_reached,observed_regime,notes
+ep_0p5uj,0.5,30,no,missing result dir: results\v17_30ps_local\ep_0p5uj,no,,,,,,,,below TTM melt threshold (Tl~828K at 0.5uJ)
+ep_1p0uj,1,30,yes,OK,yes,1361.60,0.0303,7453,yes,no,no,no melt,near TTM melt threshold (Tl~1348K at 1.0uJ)
+ep_1p2uj,1.2,30,no,missing result dir: results\v17_30ps_local\ep_1p2uj,no,,,,,,,,threshold refinement: between 1.0 and 1.5uJ
+ep_1p5uj,1.5,30,yes,OK,yes,1891.87,0.0322,7453,yes,yes,no,melt only,threshold refinement: likely near lattice melt onset
+ep_1p8uj,1.8,30,no,missing result dir: results\v17_30ps_local\ep_1p8uj,no,,,,,,,,threshold refinement: upper melt-onset bracket
+ep_2p0uj,2,30,yes,OK,yes,2422.16,0.0301,7453,yes,yes,no,melt only,above TTM melt threshold (Tl~2364K at 2.0uJ)
+ep_2p2uj,2.2,30,no,missing result dir: results\v17_30ps_local\ep_2p2uj,no,,,,,,,,threshold refinement: low vapor-onset bracket
+ep_2p5uj,2.5,30,yes,OK,yes,2953.96,0.0313,7453,yes,yes,no,melt only,threshold refinement: vapor-onset bracket
+ep_3p0uj,3,30,no,missing result dir: results\v17_30ps_local\ep_3p0uj,no,,,,,,,,threshold refinement: mid vapor-onset bracket
+ep_4p0uj,4,30,no,missing result dir: results\v17_30ps_local\ep_4p0uj,no,,,,,,,,threshold refinement: high vapor-onset bracket
+ep_5p0uj,5,30,yes,OK,yes,5604.48,0.0300,7453,yes,yes,yes,vapor/ablation candidate,above TTM vapor threshold (Tl~5237K at 5.0uJ)
