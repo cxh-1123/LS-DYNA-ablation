@@ -32,7 +32,7 @@ SUMMARY_TARGETS = [
 ]
 
 METRICS_GLOBS = [
-    RESULTS_ROOT / "v26_30ps_threshold_ablation" / "*" / "v26_threshold_metrics.csv",
+    "v26_30ps_threshold_ablation/*/v26_threshold_metrics.csv",
 ]
 
 
@@ -82,9 +82,9 @@ def main() -> int:
             missing.append(relative(src))
 
     for pattern in METRICS_GLOBS:
-        matches = sorted(pattern.parent.glob(pattern.name))
+        matches = sorted(RESULTS_ROOT.glob(pattern))
         if not matches:
-            missing.append(relative(pattern))
+            missing.append(f"results/{pattern}")
         for src in matches:
             exported.append(copy_file(src, OUT_ROOT / relative(src).removeprefix("results/")))
 
