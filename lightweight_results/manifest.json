@@ -1,22 +1,62 @@
 {
-  "generated_at_utc": "2026-05-26T11:33:09.739398+00:00",
+  "generated_at_utc": "2026-05-26T11:37:16.369960+00:00",
   "purpose": "Small reviewable summaries copied from ignored results/ outputs.",
   "exported_files": [
     {
       "source": "results/v17_30ps_local/v17_case_summary.csv",
       "destination": "lightweight_results/v17_30ps_local/v17_case_summary.csv",
-      "bytes": 1485,
+      "bytes": 1488,
       "rows": 11
     },
     {
       "source": "results/v26_30ps_threshold_ablation/v26_case_summary.csv",
       "destination": "lightweight_results/v26_30ps_threshold_ablation/v26_case_summary.csv",
-      "bytes": 788,
-      "rows": 6
+      "bytes": 900,
+      "rows": 7
+    },
+    {
+      "source": "results/v26_30ps_threshold_ablation/ep_1p0uj/v26_threshold_metrics.csv",
+      "destination": "lightweight_results/v26_30ps_threshold_ablation/ep_1p0uj/v26_threshold_metrics.csv",
+      "bytes": 12520,
+      "rows": 177
+    },
+    {
+      "source": "results/v26_30ps_threshold_ablation/ep_1p5uj/v26_threshold_metrics.csv",
+      "destination": "lightweight_results/v26_30ps_threshold_ablation/ep_1p5uj/v26_threshold_metrics.csv",
+      "bytes": 12857,
+      "rows": 178
+    },
+    {
+      "source": "results/v26_30ps_threshold_ablation/ep_2p0uj/v26_threshold_metrics.csv",
+      "destination": "lightweight_results/v26_30ps_threshold_ablation/ep_2p0uj/v26_threshold_metrics.csv",
+      "bytes": 13006,
+      "rows": 180
+    },
+    {
+      "source": "results/v26_30ps_threshold_ablation/ep_2p5uj/v26_threshold_metrics.csv",
+      "destination": "lightweight_results/v26_30ps_threshold_ablation/ep_2p5uj/v26_threshold_metrics.csv",
+      "bytes": 13051,
+      "rows": 181
+    },
+    {
+      "source": "results/v26_30ps_threshold_ablation/ep_3p0uj/v26_threshold_metrics.csv",
+      "destination": "lightweight_results/v26_30ps_threshold_ablation/ep_3p0uj/v26_threshold_metrics.csv",
+      "bytes": 13340,
+      "rows": 183
+    },
+    {
+      "source": "results/v26_30ps_threshold_ablation/ep_4p0uj/v26_threshold_metrics.csv",
+      "destination": "lightweight_results/v26_30ps_threshold_ablation/ep_4p0uj/v26_threshold_metrics.csv",
+      "bytes": 14157,
+      "rows": 186
+    },
+    {
+      "source": "results/v26_30ps_threshold_ablation/ep_5p0uj/v26_threshold_metrics.csv",
+      "destination": "lightweight_results/v26_30ps_threshold_ablation/ep_5p0uj/v26_threshold_metrics.csv",
+      "bytes": 14891,
+      "rows": 188
     }
   ],
-  "missing_expected_files": [
-    "results/v26_30ps_threshold_ablation/*/v26_threshold_metrics.csv"
-  ],
+  "missing_expected_files": [],
   "note": "Large LS-DYNA outputs such as d3plot, d3hsp, messag and tprint remain ignored and are not part of this package."
 }
