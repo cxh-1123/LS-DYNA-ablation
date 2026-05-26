@@ -12,6 +12,7 @@ python scripts\export_lightweight_results.py
 
 Exported files:
 - `lightweight_results/v17_30ps_local/v17_case_summary.csv` (1882 bytes, 14 rows)
+- `lightweight_results/v17_30ps_local/v17_threshold_estimates.csv` (derived threshold estimates, 2 rows)
 - `lightweight_results/v26_30ps_threshold_ablation/v26_case_summary.csv` (900 bytes, 7 rows)
 - `lightweight_results/v26_30ps_threshold_ablation/ep_1p0uj/v26_threshold_metrics.csv` (12520 bytes, 177 rows)
 - `lightweight_results/v26_30ps_threshold_ablation/ep_1p5uj/v26_threshold_metrics.csv` (12857 bytes, 178 rows)
