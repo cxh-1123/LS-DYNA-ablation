@@ -1,12 +1,12 @@
 {
-  "generated_at_utc": "2026-05-26T11:37:16.369960+00:00",
+  "generated_at_utc": "2026-05-26T11:44:31.295203+00:00",
   "purpose": "Small reviewable summaries copied from ignored results/ outputs.",
   "exported_files": [
     {
       "source": "results/v17_30ps_local/v17_case_summary.csv",
       "destination": "lightweight_results/v17_30ps_local/v17_case_summary.csv",
-      "bytes": 1488,
-      "rows": 11
+      "bytes": 1882,
+      "rows": 14
     },
     {
       "source": "results/v26_30ps_threshold_ablation/v26_case_summary.csv",

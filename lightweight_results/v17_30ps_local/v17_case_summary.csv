@@ -8,5 +8,8 @@ ep_2p0uj,2,30,yes,OK,yes,2422.16,0.0301,7453,yes,yes,no,melt only,above TTM melt
 ep_2p2uj,2.2,30,no,missing result dir: results\v17_30ps_local\ep_2p2uj,no,,,,,,,,threshold refinement: low vapor-onset bracket
 ep_2p5uj,2.5,30,yes,OK,yes,2953.96,0.0313,7453,yes,yes,no,melt only,threshold refinement: vapor-onset bracket
 ep_3p0uj,3,30,yes,OK,yes,3483.53,0.0303,7453,yes,yes,no,melt only,threshold refinement: mid vapor-onset bracket
+ep_3p05uj,3.05,30,yes,OK,yes,3535.87,0.0300,7453,yes,yes,no,melt only,threshold refinement: near vapor threshold estimate
+ep_3p1uj,3.1,30,yes,OK,yes,3590.86,0.0311,7453,yes,yes,yes,vapor/ablation candidate,threshold refinement: vapor threshold confirmation
+ep_3p2uj,3.2,30,yes,OK,yes,3696.44,0.0306,7453,yes,yes,yes,vapor/ablation candidate,threshold refinement: above vapor threshold check
 ep_4p0uj,4,30,yes,OK,yes,4545.95,0.0308,7453,yes,yes,yes,vapor/ablation candidate,threshold refinement: high vapor-onset bracket
 ep_5p0uj,5,30,yes,OK,yes,5604.48,0.0300,7453,yes,yes,yes,vapor/ablation candidate,above TTM vapor threshold (Tl~5237K at 5.0uJ)
