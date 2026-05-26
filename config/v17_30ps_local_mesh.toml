@@ -89,10 +89,52 @@ run_lsdyna_hint = true
 notes           = "near TTM melt threshold (Tl~1348K at 1.0uJ)"
 
 [[selected_cases]]
+name            = "ep_1p2uj"
+Ep_uJ           = 1.2
+run_lsdyna_hint = true
+notes           = "threshold refinement: between 1.0 and 1.5uJ"
+
+[[selected_cases]]
+name            = "ep_1p5uj"
+Ep_uJ           = 1.5
+run_lsdyna_hint = true
+notes           = "threshold refinement: likely near lattice melt onset"
+
+[[selected_cases]]
+name            = "ep_1p8uj"
+Ep_uJ           = 1.8
+run_lsdyna_hint = true
+notes           = "threshold refinement: upper melt-onset bracket"
+
+[[selected_cases]]
 name            = "ep_2p0uj"
 Ep_uJ           = 2.0
 run_lsdyna_hint = true
 notes           = "above TTM melt threshold (Tl~2364K at 2.0uJ)"
+
+[[selected_cases]]
+name            = "ep_2p2uj"
+Ep_uJ           = 2.2
+run_lsdyna_hint = true
+notes           = "threshold refinement: low vapor-onset bracket"
+
+[[selected_cases]]
+name            = "ep_2p5uj"
+Ep_uJ           = 2.5
+run_lsdyna_hint = true
+notes           = "threshold refinement: vapor-onset bracket"
+
+[[selected_cases]]
+name            = "ep_3p0uj"
+Ep_uJ           = 3.0
+run_lsdyna_hint = true
+notes           = "threshold refinement: mid vapor-onset bracket"
+
+[[selected_cases]]
+name            = "ep_4p0uj"
+Ep_uJ           = 4.0
+run_lsdyna_hint = true
+notes           = "threshold refinement: high vapor-onset bracket"
 
 [[selected_cases]]
 name            = "ep_5p0uj"

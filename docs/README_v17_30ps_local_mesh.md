@@ -132,7 +132,14 @@ coupled TTM–FD or shorter ITS tuning.
 | --- | ---: | ---: | --- |
 | `ep_0p5uj` | 0.5 | 1.73×10³ | below TTM melt |
 | `ep_1p0uj` | 1.0 | 3.46×10³ | near TTM melt |
+| `ep_1p2uj` | 1.2 | 4.15×10³ | threshold refinement |
+| `ep_1p5uj` | 1.5 | 5.18×10³ | threshold refinement |
+| `ep_1p8uj` | 1.8 | 6.22×10³ | threshold refinement |
 | `ep_2p0uj` | 2.0 | 6.91×10³ | above TTM melt |
+| `ep_2p2uj` | 2.2 | 7.60×10³ | threshold refinement |
+| `ep_2p5uj` | 2.5 | 8.64×10³ | threshold refinement |
+| `ep_3p0uj` | 3.0 | 1.04×10⁴ | threshold refinement |
+| `ep_4p0uj` | 4.0 | 1.38×10⁴ | threshold refinement |
 | `ep_5p0uj` | 5.0 | 1.73×10⁴ | above TTM vapor |
 
 All cases: τ = 30 ps, w0 = 35 µm, A = 0.5, t_end = 5 ns.
