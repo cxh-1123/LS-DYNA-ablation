@@ -1,0 +1,18 @@
+# V1.7 grid-convergence build plan.
+#
+# This does not run LS-DYNA. It defines which surface dz values and energy
+# cases should be generated for a focused mesh-sensitivity comparison.
+
+[base]
+toml = "config/v17_30ps_local_mesh.toml"
+out_dir = "models/v17_grid_convergence"
+
+[sweep]
+surface_dz_nm = [5.0, 10.0, 20.0]
+# Keep this focused. ep_1p5uj probes melt onset, ep_2p5uj probes vapor onset,
+# ep_5p0uj checks the high-energy ablation candidate.
+case_names = ["ep_1p5uj", "ep_2p5uj", "ep_5p0uj"]
+
+[run_guidance]
+recommended_ncpu = 4
+run_one_case_first = "dz10nm/ep_2p5uj"
