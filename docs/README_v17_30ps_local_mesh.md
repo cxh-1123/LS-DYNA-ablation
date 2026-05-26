@@ -12,6 +12,9 @@ real 3-D models.
 > approximation.  Compare its temperatures with the **lattice branch
 > `Tl`** of the V1.6 TTM prototype — **not** with `Te` and not as a
 > complete ultrafast ablation model.
+>
+> See `docs/README_v17_single_temperature_limits.md` for the wording and
+> interpretation limits to use in reports.
 
 Later stages may add LS-DYNA element deletion and SPH/ALE ejecta
 visualisation routes; **V1.7 does not include those**.
