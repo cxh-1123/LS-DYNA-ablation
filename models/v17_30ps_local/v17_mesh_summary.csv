@@ -1,0 +1,2 @@
+radius_um,thickness_um,NR,NZ,n_nodes,n_elements,dr_min_um,dr_max_um,dz_min_nm,dz_max_nm,axis_top_node_id
+100.0,5.0,80,92,7533,7360,0.500000,2.500000,10.0000,465.2390,7453

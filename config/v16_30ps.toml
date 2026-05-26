@@ -1,0 +1,101 @@
+# =============================================================================
+# V1.6 -- 30 ps analytic-scale + 1D TTM prototype configuration
+#
+# Purpose:
+#   This file is the ONLY knob set for V1.6 scripts:
+#     scripts/estimate_v16_30ps_scales.py
+#     scripts/ttm_1d_30ps_prototype.py
+#     scripts/explain_axisymmetric_center_v16.py
+#
+#   V1.6 is a *pure Python pre-flight* before the V1.7 local-mesh
+#   LS-DYNA model.  It does NOT run LS-DYNA, does NOT modify V1/V1.5/
+#   V2/V3A files, and does NOT introduce SPH or element erosion.
+#
+# Unit convention:
+#   All physical formulae below use SI (m, s, kg, K, J, W).  Scripts
+#   convert to nm / um / ps / ns for display only.
+#
+# IMPORTANT - placeholder note:
+#   Absorption depths and the electron-phonon coupling factor G are
+#   only order-of-magnitude estimates for silicon in the UV/visible.
+#   They are flagged "approximate" everywhere they're used; the TTM
+#   prototype is therefore a *qualitative scale-finder*, not a
+#   calibrated material model.
+# =============================================================================
+
+[meta]
+description = "V1.6 30 ps analytic-scale + 1D TTM prototype (Si wafer)."
+sample = "intrinsic silicon"
+
+[laser]
+wavelengths_nm        = [266, 355, 532]
+pulse_widths_ps       = [30.0, 100.0, 1000.0, 100000.0]   # 30 ps .. 100 ns
+default_pulse_width_ps = 30.0
+spot_radius_um        = 35.0     # w0 = 1/e^2 intensity radius
+absorption_A          = 0.5
+pulse_energy_uJ       = [0.1, 0.5, 1.0, 2.0, 5.0]
+default_wavelength_nm = 266
+
+# Approximate single-photon absorption depths in silicon at 300 K.
+# These are *clearly* placeholders -- the actual penetration depth
+# depends on doping, temperature, and free-carrier absorption during
+# the pulse.  References for the order of magnitude:
+#   266 nm  ~ 5 nm
+#   355 nm  ~ 10 nm
+#   532 nm  ~ 1000 nm (often quoted at ~ 1 um)
+[laser.absorption_depth_nm]
+"266"  = 5.0
+"355"  = 10.0
+"532"  = 1000.0
+
+[material]
+# Single-temperature lattice properties (match V1 / V1.5).
+T0_K       = 300.0
+T_melt_K   = 1687.0
+T_vap_K    = 3538.0
+rho_kg_m3  = 2329.0
+cp_J_kgK   = 712.0
+k_W_mK     = 156.0          # also k_lattice for the TTM
+
+# Two-temperature model PROTOTYPE parameters.  These are deliberately
+# round numbers chosen to demonstrate qualitative TTM behaviour for Si.
+# DO NOT use them for quantitative predictions.
+[material.ttm_prototype]
+gamma_e_J_m3_K2  = 100.0    # Ce(Te) = gamma_e * Te   (linear electron heat capacity)
+ke_W_mK          = 150.0    # electron thermal conductivity (constant placeholder)
+G_W_m3_K         = 1.0e17   # electron-phonon coupling
+Te_max_clip_K    = 1.0e6    # numerical safety clip for runaway electron T
+Tl_max_clip_K    = 1.0e6
+
+[mesh_baseline]
+# What V1 / V1.5 used at their surface.
+current_v1_dz_um                       = 2.5
+recommended_cells_per_diffusion_length = 5
+
+[ttm_solver]
+# 1D TTM finite-difference settings.  z goes from 0 (surface) to z_max.
+# Pulse temporal centre is at t = 0 (so t_start should be negative).
+z_max_nm         = 500.0
+dz_nm            = 5.0
+t_start_ps       = -100.0       # well before the pulse centre
+t_end_ps         = 500.0        # well after the pulse peak
+dt_target_fs     = 5.0          # auto-throttled if CFL is tighter
+snapshot_times_ps = [0.0, 15.0, 30.0, 60.0, 100.0, 200.0, 500.0]
+save_every_n_steps = 50         # how often to record surface T history
+
+[ttm_scan]
+# Which (Ep, wavelength, tau) cases the TTM prototype runs.
+pulse_width_ps    = 30.0
+wavelength_nm     = 266
+spot_radius_um    = 35.0
+absorption_A      = 0.5
+pulse_energy_uJ   = [0.1, 0.5, 1.0, 2.0, 5.0]
+
+[axisymmetric_explanation]
+# Inputs for explain_axisymmetric_center_v16.py.
+# We re-use V2's vapor_confirm_100ns peak snapshot if present, otherwise
+# fall back to a synthetic Gaussian heat spot.  V1/V1.5/V2 files are
+# READ-ONLY for this script.
+prefer_v2_case        = "vapor_confirm_100ns"
+fallback_synthetic_w0_um = 35.0
+fallback_peak_T_K        = 3500.0

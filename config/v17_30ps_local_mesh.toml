@@ -1,0 +1,101 @@
+# =============================================================================
+# V1.7 -- 2D axisymmetric local refined mesh, 30 ps thermal model
+#
+# Single-temperature LS-DYNA approximation (NOT full TTM).  Compare lattice
+# temperatures against V1.6 TTM prototype Tl, not Te.
+#
+# Units: mm - ms - kg - kN - GPa - K  (same as V1 / V1.5)
+# =============================================================================
+
+[meta]
+description = "V1.7 local refined 30 ps axisymmetric thermal model (Si)."
+
+[geometry]
+radius_um    = 100.0
+thickness_um = 5.0
+
+[grid_z_um]
+# Depth from TOP surface downward (surface at z = thickness_um).
+# Region A: top 0.5 um below surface, dz = 10 nm
+surface_fine_depth_um = 0.5
+surface_dz_nm         = 10.0
+# Region B: next 1.5 um (0.5--2.0 um below surface), dz 10->100 nm
+mid_depth_end_um      = 2.0
+mid_dz_start_nm       = 10.0
+mid_dz_end_nm         = 100.0
+# Region C: 2.0--5.0 um below surface (bulk of domain), dz 100->500 nm
+bulk_dz_start_nm      = 100.0
+bulk_dz_end_nm        = 500.0
+
+[grid_r_um]
+# r = 0 at symmetry axis.
+inner_radius_um = 10.0
+inner_dr_um     = 0.5
+mid_radius_um   = 50.0
+mid_dr_um       = 1.0
+outer_radius_um = 100.0
+outer_dr_um     = 2.5
+
+[laser]
+pulse_width_ps  = 30.0
+spot_radius_um  = 35.0
+absorption_A    = 0.5
+# Gaussian temporal pulse (same energy normalisation as V1.6 TTM source)
+
+[material]
+T_init_K  = 300.0
+T_melt_K  = 1687.0
+T_vap_K   = 3538.0
+rho_kg_mm3 = 2.33e-6
+cp_J_kgK   = 700.0
+k_kW_mmK   = 1.50e-4
+
+[solver]
+t_end_ns           = 5.0
+post_pulse_tau_mult = 4
+# Thermal timestep: ITS ~ 0.05 * tau, capped for stability
+its_frac_of_tau    = 0.05
+# Legacy (deprecated): n_plots_desired = 40  ->  dt = 0.125 ns (too coarse for 30 ps)
+
+[database_output]
+# LS-DYNA *DATABASE_* DT written to .k (converted to ms internally).
+# Same DT on: *DATABASE_BINARY_D3PLOT, *DATABASE_BINARY_D3THDT,
+#            *DATABASE_TPRINT, *DATABASE_GLSTAT
+#
+# Uniform 0.01 ns -> snapshots at 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ps, ...
+# (~500 frames over 5 ns; tprint ~100 MB per case, acceptable for post-processing)
+strategy     = "uniform"
+dt_output_ns = 0.01
+
+# Reference piecewise schedule (LS-DYNA constant-DT only; builder uses uniform dt above):
+#   0.0 -- 0.2 ns : 0.01 ns  (covers 10/30/60/100 ps targets)
+#   0.2 -- 1.0 ns : 0.05 ns
+#   1.0 -- 5.0 ns : 0.5 ns
+
+[output_times_ns]
+# Plot / check targets (ns); should align with dt_output_ns grid above.
+times = [0.0, 0.01, 0.03, 0.06, 0.1, 0.3, 1.0, 2.0, 5.0]
+
+[[selected_cases]]
+name            = "ep_0p5uj"
+Ep_uJ           = 0.5
+run_lsdyna_hint = true
+notes           = "below TTM melt threshold (Tl~828K at 0.5uJ)"
+
+[[selected_cases]]
+name            = "ep_1p0uj"
+Ep_uJ           = 1.0
+run_lsdyna_hint = true
+notes           = "near TTM melt threshold (Tl~1348K at 1.0uJ)"
+
+[[selected_cases]]
+name            = "ep_2p0uj"
+Ep_uJ           = 2.0
+run_lsdyna_hint = true
+notes           = "above TTM melt threshold (Tl~2364K at 2.0uJ)"
+
+[[selected_cases]]
+name            = "ep_5p0uj"
+Ep_uJ           = 5.0
+run_lsdyna_hint = true
+notes           = "above TTM vapor threshold (Tl~5237K at 5.0uJ)"

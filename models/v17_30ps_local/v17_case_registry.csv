@@ -1,0 +1,5 @@
+name,Ep_uJ,tau_ps,w0_um,A,I0_peak_kW_mm2,t_end_ns,k_file,run_lsdyna_final,NR,NZ,n_nodes,n_elements,dz_min_nm,axis_top_node_id,notes
+ep_0p5uj,0.5,30,35,0.5,1.727718e+03,5,models/v17_30ps_local/v17_ep_0p5uj.k,true,80,92,7533,7360,10.0000,7453,below TTM melt threshold (Tl~828K at 0.5uJ)
+ep_1p0uj,1,30,35,0.5,3.455436e+03,5,models/v17_30ps_local/v17_ep_1p0uj.k,true,80,92,7533,7360,10.0000,7453,near TTM melt threshold (Tl~1348K at 1.0uJ)
+ep_2p0uj,2,30,35,0.5,6.910872e+03,5,models/v17_30ps_local/v17_ep_2p0uj.k,true,80,92,7533,7360,10.0000,7453,above TTM melt threshold (Tl~2364K at 2.0uJ)
+ep_5p0uj,5,30,35,0.5,1.727718e+04,5,models/v17_30ps_local/v17_ep_5p0uj.k,true,80,92,7533,7360,10.0000,7453,above TTM vapor threshold (Tl~5237K at 5.0uJ)
