@@ -29,7 +29,7 @@ _THIS_DIR = Path(__file__).resolve().parent
 if str(_THIS_DIR) not in sys.path:
     sys.path.insert(0, str(_THIS_DIR))
 
-from plot_v1_temperature import parse_tprint  # noqa: E402
+from lsdyna_tprint import parse_tprint  # noqa: E402
 from check_v17_outputs import tprint_to_grid  # noqa: E402
 from extract_v26_30ps_threshold_ablation import (  # noqa: E402
     MAIN_CASE,

@@ -85,7 +85,7 @@ class FieldData:
 # Data loading
 # =============================================================================
 def load_v2_peak_snapshot(project_root: Path, case: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    from plot_v1_temperature import (
+    from lsdyna_tprint import (
         RADIUS_MM, THICKNESS_MM,
         parse_tprint, reshape_to_grid,
     )
