@@ -103,9 +103,11 @@ def ejecta_node_velocities(mesh, radius_um: float, depth_um: float,
             profile = math.exp(-2.0 * (r_um / max(radius_um, 1e-9)) ** 2)
             vy = vy_mm_ms * profile
             vx = radial_fraction * vy * (r_um / max(radius_um, 1e-9))
+            # Keep the whole card below the classic 80-column keyword width.
+            # Some LS-DYNA builds skip long free-format initial velocity cards.
             lines.append(
-                f"{nid:8d}{vx:16.7e}{vy:16.7e}{0.0:16.7e}"
-                f"{0.0:16.7e}{0.0:16.7e}{0.0:16.7e}"
+                i10(nid) + f10(vx) + f10(vy) + f10(0.0)
+                + f10(0.0) + f10(0.0) + f10(0.0)
             )
     return lines
 
@@ -166,8 +168,7 @@ def build_dynamic_k_text(case: V40Case, mesh, cfg: dict, v17_cfg: dict) -> tuple
     if velocity_lines:
         velocity_block = (
             "*INITIAL_VELOCITY_NODE\n"
-            "$#     nid              vx              vy              vz"
-            "             vrx             vry             vrz\n"
+            "$#     nid        vx        vy        vz       vrx       vry       vrz\n"
             + "\n".join(velocity_lines)
             + "\n$\n"
         )
