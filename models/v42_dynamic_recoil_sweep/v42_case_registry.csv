@@ -1,0 +1,5 @@
+name,Ep_uJ,k_file,vapor_radius_um,removed_elements,kept_elements,recoil_nodes,recoil_velocity_m_s,axis_top_node_id,run_lsdyna_final,notes
+ep_5p0uj_recoil_100ms,5,models/v42_dynamic_recoil_sweep/v42_ep_5p0uj_recoil_100ms.k,17.388935,135,7225,33,-100.000000,7453,true,baseline V4B recoil level
+ep_5p0uj_recoil_1000ms,5,models/v42_dynamic_recoil_sweep/v42_ep_5p0uj_recoil_1000ms.k,17.388935,135,7225,33,-1000.000000,7453,true,10x stronger recoil drive
+ep_5p0uj_recoil_3000ms,5,models/v42_dynamic_recoil_sweep/v42_ep_5p0uj_recoil_3000ms.k,17.388935,135,7225,33,-3000.000000,7453,true,30x stronger recoil drive
+ep_5p0uj_recoil_5000ms,5,models/v42_dynamic_recoil_sweep/v42_ep_5p0uj_recoil_5000ms.k,17.388935,135,7225,33,-5000.000000,7453,true,50x stronger recoil drive; visible-motion stress test

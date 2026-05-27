@@ -1,0 +1,56 @@
+# =============================================================================
+# V4C -- recoil-drive sweep on the pre-deleted V4B crater
+#
+# Purpose:
+#   V4B confirmed that the pre-deleted crater model runs, but the displacement
+#   response is extremely small.  V4C keeps the same removed crater geometry and
+#   scans stronger recoil/ejecta driving velocities.
+#
+# Units: mm - ms - kg - kN - GPa
+# Note: 1 m/s = 1 mm/ms in this unit system.
+# =============================================================================
+
+[meta]
+description = "V4C recoil sweep: stronger dynamic drive on V4B pre-deleted crater."
+
+[source]
+v17_config = "config/v17_30ps_local_mesh.toml"
+
+[material]
+rho_kg_mm3 = 2.33e-6
+youngs_modulus_GPa = 130.0
+poisson_ratio = 0.28
+
+[dynamic_solver]
+t_end_ns = 5.0
+dt_plot_ns = 0.01
+timestep_scale = 0.67
+
+[deletion_model]
+vapor_threshold_Ep_uJ = 3.0519
+active_layer_depth_um = 0.05
+radial_velocity_fraction = 0.10
+
+[[selected_cases]]
+name = "ep_5p0uj_recoil_100ms"
+Ep_uJ = 5.0
+recoil_velocity_m_s = -100.0
+notes = "baseline V4B recoil level"
+
+[[selected_cases]]
+name = "ep_5p0uj_recoil_1000ms"
+Ep_uJ = 5.0
+recoil_velocity_m_s = -1000.0
+notes = "10x stronger recoil drive"
+
+[[selected_cases]]
+name = "ep_5p0uj_recoil_3000ms"
+Ep_uJ = 5.0
+recoil_velocity_m_s = -3000.0
+notes = "30x stronger recoil drive"
+
+[[selected_cases]]
+name = "ep_5p0uj_recoil_5000ms"
+Ep_uJ = 5.0
+recoil_velocity_m_s = -5000.0
+notes = "50x stronger recoil drive; visible-motion stress test"

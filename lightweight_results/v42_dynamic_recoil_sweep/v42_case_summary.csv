@@ -1,0 +1,5 @@
+case,Ep_uJ,recoil_velocity_m_s,vapor_radius_um,removed_elements,recoil_nodes,status,normal_termination,problem_time_ms,problem_cycle,d3plot_files,d3plot_total_MB,notes
+ep_5p0uj_recoil_100ms,5,-100.000000,17.388935,135,33,missing messag,no,,,0,0.000,baseline V4B recoil level
+ep_5p0uj_recoil_1000ms,5,-1000.000000,17.388935,135,33,OK,yes,5.0005E-06,6702,11,1259.479,10x stronger recoil drive
+ep_5p0uj_recoil_3000ms,5,-3000.000000,17.388935,135,33,OK,yes,5.0007E-06,6717,11,1259.479,30x stronger recoil drive
+ep_5p0uj_recoil_5000ms,5,-5000.000000,17.388935,135,33,missing messag,no,,,0,0.000,50x stronger recoil drive; visible-motion stress test
