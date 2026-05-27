@@ -1,0 +1,53 @@
+# =============================================================================
+# V4.1 / V4B -- dynamic ablation with pre-deleted vapor-zone elements
+#
+# Purpose:
+#   First robust material-removal deck.  Instead of only marking vapor-zone
+#   elements, the generated .k omits them from the structural mesh.
+#
+# This is a bridge toward active erosion:
+#   V4A: full mesh + ejecta/recoil pilot
+#   V4B: vapor-zone elements removed before dynamics starts
+#   V4C: solver-version-specific active erosion / element death
+#
+# Units: mm - ms - kg - kN - GPa
+# =============================================================================
+
+[meta]
+description = "V4B dynamic ablation: pre-delete vapor-zone elements from the structural mesh."
+
+[source]
+v40_config = "config/v40_dynamic_ablation_pilot.toml"
+v17_config = "config/v17_30ps_local_mesh.toml"
+
+[material]
+rho_kg_mm3 = 2.33e-6
+youngs_modulus_GPa = 130.0
+poisson_ratio = 0.28
+
+[dynamic_solver]
+t_end_ns = 5.0
+dt_plot_ns = 0.01
+timestep_scale = 0.67
+
+[deletion_model]
+# Same vapor threshold used by V4A, from V1.7 threshold interpolation.
+vapor_threshold_Ep_uJ = 3.0519
+
+# Remove top-layer elements inside the estimated vapor radius.
+active_layer_depth_um = 0.05
+
+# Optional recoil velocity on newly exposed crater-boundary nodes.
+# Negative y means downward into the target in the current r-z mesh.
+recoil_velocity_m_s = -100.0
+radial_velocity_fraction = 0.10
+
+[[selected_cases]]
+name = "ep_3p1uj"
+Ep_uJ = 3.1
+notes = "just above vapor threshold; very small pre-deleted crater"
+
+[[selected_cases]]
+name = "ep_4p0uj"
+Ep_uJ = 4.0
+notes = "clear vapor candidate; visible pre-deleted crater"

@@ -1,0 +1,3 @@
+name,Ep_uJ,k_file,vapor_radius_um,removed_elements,kept_elements,recoil_nodes,axis_top_node_id,run_lsdyna_final,notes
+ep_3p1uj,3.1,models/v41_dynamic_ablation_deletion/v41_ep_3p1uj.k,3.094855,30,7330,12,7453,true,just above vapor threshold; very small pre-deleted crater
+ep_4p0uj,4,models/v41_dynamic_ablation_deletion/v41_ep_4p0uj.k,12.872437,115,7245,23,7453,true,clear vapor candidate; visible pre-deleted crater
