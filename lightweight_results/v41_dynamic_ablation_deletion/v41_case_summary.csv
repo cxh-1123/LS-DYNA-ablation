@@ -1,0 +1,4 @@
+case,Ep_uJ,vapor_radius_um,removed_elements,kept_elements,recoil_nodes,status,normal_termination,problem_time_ms,problem_cycle,d3plot_files,d3plot_total_MB,notes
+ep_3p1uj,3.1,3.094855,30,7330,12,OK,yes,5.0002E-06,6693,11,1273.819,just above vapor threshold; very small pre-deleted crater
+ep_4p0uj,4,12.872437,115,7245,23,OK,yes,5.0001E-06,6693,11,1262.211,clear vapor candidate; visible pre-deleted crater
+ep_5p0uj,5,17.388935,135,7225,33,OK,yes,5.0006E-06,6694,11,1259.479,strong vapor candidate; larger pre-deleted crater

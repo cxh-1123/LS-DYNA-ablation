@@ -51,3 +51,8 @@ notes = "just above vapor threshold; very small pre-deleted crater"
 name = "ep_4p0uj"
 Ep_uJ = 4.0
 notes = "clear vapor candidate; visible pre-deleted crater"
+
+[[selected_cases]]
+name = "ep_5p0uj"
+Ep_uJ = 5.0
+notes = "strong vapor candidate; larger pre-deleted crater"
