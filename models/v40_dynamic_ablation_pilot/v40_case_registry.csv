@@ -1,0 +1,5 @@
+name,Ep_uJ,k_file,vapor_radius_um,active_layer_depth_um,ejecta_velocity_m_s,ejecta_nodes,erosion_candidate_elements,axis_top_node_id,run_lsdyna_final,notes
+ep_3p1uj,3.1,models/v40_dynamic_ablation_pilot/v40_ep_3p1uj.k,3.094855,0.050000,500.000000,42,30,7453,true,just above V1.7 vapor threshold
+ep_3p2uj,3.2,models/v40_dynamic_ablation_pilot/v40_ep_3p2uj.k,5.387412,0.050000,500.000000,66,55,7453,true,above V1.7 vapor threshold
+ep_4p0uj,4,models/v40_dynamic_ablation_pilot/v40_ep_4p0uj.k,12.872437,0.050000,500.000000,138,115,7453,true,clear vapor candidate
+ep_5p0uj,5,models/v40_dynamic_ablation_pilot/v40_ep_5p0uj.k,17.388935,0.050000,500.000000,168,135,7453,true,strong vapor candidate
