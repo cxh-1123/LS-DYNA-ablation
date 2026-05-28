@@ -82,3 +82,11 @@ Thumbs.db
 
 # ----- Misc -----
 *.log
+post/
+field_data/
+figures/
+
+# ----- LAMMPS MD outputs (regenerable) -----
+*.lammpstrj
+**/final.data
+potentials/*.sw

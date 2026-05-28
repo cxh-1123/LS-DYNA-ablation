@@ -24,12 +24,15 @@ import numpy as np
 # Fixed-width formatters (ASCII, same as V1)
 # =============================================================================
 def f10(v: float) -> str:
-    if v == 0.0:
-        return "       0.0"
-    s = f"{v:10.3e}"
-    if len(s) != 10:
-        s = f"{v:.2e}".rjust(10)
-    return s
+    """LS-DYNA fixed 10-column float field (must not exceed width 10)."""
+    if abs(v) < 1e-99:
+        # Trailing space prevents ``0.0-5.000e+03`` merge with a negative next field.
+        return "      0.0 "
+    for prec in (4, 3, 2, 1):
+        s = f"{v:.{prec}E}"
+        if len(s) <= 10:
+            return s.rjust(10)
+    return f"{v:.0E}"[:10].rjust(10)
 
 
 def i10(v: int) -> str:

@@ -1,0 +1,22 @@
+{
+  "case": "ep_5p0uj",
+  "profile": "smoke",
+  "Ep_uJ": 5.0,
+  "pulse_width_ps": 30.0,
+  "spot_radius_um": 35.0,
+  "I0_metal_eV_ps_A2": 0.7625733444253673,
+  "peak_Wm3_estimate": 2.4433622057845795e+21,
+  "slab_angstrom": {
+    "lx": 65.172,
+    "ly": 43.448,
+    "lz": 43.448
+  },
+  "laser_axis": "+x",
+  "ttm_style": "ttm/mod",
+  "snapshot_times_ps": [
+    0,
+    5,
+    10
+  ],
+  "input": "models/v6_lammps_ttm_md_pilot/ep_5p0uj/in_ep_5p0uj.lammps"
+}

@@ -1,0 +1,104 @@
+# =============================================================================
+# V6 -- LAMMPS TTM-MD pilot (Si, 30 ps pulse)
+#
+# Purpose:
+#   First atomistic TTM+MD step toward paper-like plume / ejecta and V4
+#   structured-light handoff.  Does NOT modify V1.7 / V2.6 / V3B / V5A.
+#
+# Units in this file: SI unless noted.  LAMMPS script uses metal units.
+# Placeholder TTM electron parameters follow V1.6 (qualitative).
+# =============================================================================
+
+[meta]
+description = "V6 LAMMPS TTM-MD pilot for ep_5p0uj 30 ps ablation."
+version = "V6.0-pilot"
+
+[source_alignment]
+v16_config = "config/v16_30ps.toml"
+v17_config = "config/v17_30ps_local_mesh.toml"
+v26_driver = "results/v26_30ps_threshold_ablation/v3b_driver/v3b_driver_ep5p0uj.json"
+notes = "Pulse/laser from V1.6/V1.7; compare crater/plume trends to V2.6/V3B."
+
+[laser]
+wavelength_nm = 266
+pulse_width_ps = 30.0
+spot_radius_um = 35.0
+absorption_A = 0.5
+absorption_depth_nm = 5.0
+
+[[cases]]
+name = "ep_5p0uj"
+Ep_uJ = 5.0
+run_lammps = true
+notes = "Main V2.6/V3B driver case; above TTM vapor threshold in V1.6 scan."
+
+[material]
+T0_K = 300.0
+T_melt_K = 1687.0
+T_vap_K = 3538.0
+rho_kg_m3 = 2329.0
+lattice_a_angstrom = 5.431
+
+[material.ttm_lammps]
+# LAMMPS fix ttm: Ce(Te)=C_e*Te, gamma_p = electron-phonon coupling G [W/m^3/K]
+# Values are V1.6-order placeholders -- calibrate against literature before publish.
+C_e_J_m3_K2 = 100.0
+k_e_W_mK = 150.0
+gamma_p_W_m3_K = 1.0e17
+T_max_K = 1.0e6
+v_0_m_s = 0.0
+
+[md_box]
+# Depth along +x for fix ttm/mod laser (theta(x-x_surf)*I0*exp(-x/l_skin)).
+nx_lat = 36
+ny_lat = 18
+nz_lat = 18
+boundary_x = "p"
+boundary_y = "p"
+boundary_z = "p"
+
+[ttm_grid]
+# TTM grid: x = depth (laser axis), y/z = lateral
+nx = 24
+ny = 12
+nz = 12
+
+[solver]
+dt_fs = 2.0
+t_end_ps = 500.0
+thermo_every = 500
+dump_every_ps = 10.0
+snapshot_times_ps = [0, 10, 30, 50, 100, 200, 500]
+
+# Fast validation profile (~6k atoms, 50 ps). Use: build/run with --smoke
+[profile.smoke]
+nx_lat = 12
+ny_lat = 8
+nz_lat = 8
+ttm_nx = 8
+ttm_ny = 4
+ttm_nz = 4
+dt_fs = 0.2
+t_end_ps = 10.0
+thermo_every = 100
+dump_every_ps = 5.0
+snapshot_times_ps = [0, 5, 10]
+
+[lammps]
+# Path to Stillinger-Weber potential (copy from LAMMPS potentials or set env)
+si_sw_potential = "potentials/Si.sw"
+executable_candidates = ["lmp", "lmp_mpi", "lammps", "lmp.exe"]
+
+[export]
+# Target grid for V4 / V5B handoff (um)
+r_min_um = -60.0
+r_max_um = 60.0
+z_min_um = -8.0
+z_max_um = 80.0
+bin_r_um = 0.5
+bin_z_um = 0.5
+
+[render]
+dpi = 300
+colormap_T = "inferno"
+colormap_density = "magma"

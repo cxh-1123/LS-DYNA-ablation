@@ -1,0 +1,17 @@
+{
+  "case": "ep_5p0uj",
+  "profile": "smoke",
+  "Ep_uJ": 5.0,
+  "pulse_width_ps": 30.0,
+  "spot_radius_um": 35.0,
+  "n_atoms": 6144,
+  "t_end_ps": 10.0,
+  "snapshot_times_ps": [0, 5, 10],
+  "dt_fs": 0.2,
+  "lattice_temp_K_at_10ps": 4347.8,
+  "ttm_style": "ttm/mod",
+  "laser_axis": "+x",
+  "wall_time_min": 24.3,
+  "status": "completed",
+  "notes": "Periodic boundaries; qualitative TTM params from LAMMPS Si example."
+}

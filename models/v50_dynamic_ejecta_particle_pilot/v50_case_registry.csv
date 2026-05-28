@@ -1,0 +1,2 @@
+name,Ep_uJ,k_file,removed_elements,recoil_nodes,ejecta_markers,ejecta_nodes,recoil_velocity_m_s,run_lsdyna_final,notes
+ep_5p0uj_ejecta_8500ms,5,models/v50_dynamic_ejecta_particle_pilot/v50_ep_5p0uj_ejecta_8500ms.k,135,33,434,1736,-5000.000000,true,V5A first visible ejecta-marker plume pilot; based on V4C 5uJ/5000m/s case.

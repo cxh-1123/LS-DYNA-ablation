@@ -1,0 +1,54 @@
+# =============================================================================
+# V44 -- Real d3plot field extraction through LS-PrePost command files
+#
+# This workflow does not fake the fields.  LS-PrePost opens the real d3plot
+# files and writes selected state data into small text .k files, which are then
+# summarized into CSV/PNG outputs.
+#
+# Units inherited from V4C decks: mm - ms - kg - kN - GPa
+# =============================================================================
+
+[meta]
+description = "V44 LS-PrePost batch extraction of real d3plot displacement and fringe fields."
+
+[source]
+case_registry = "models/v42_dynamic_recoil_sweep/v42_case_registry.csv"
+model_root = "models/v42_dynamic_recoil_sweep"
+result_root = "results/v42_dynamic_recoil_sweep"
+
+[output]
+command_root = "post/v44_lsprepost_real_field_extract"
+field_root = "field_data/v44_lsprepost_real_field_extract"
+lightweight_root = "lightweight_results/v44_lsprepost_real_field_extract"
+figure_root = "figures/v44_lsprepost_real_field_extract"
+
+[states]
+# V42 has about 502 output states when dt_plot_ns = 0.01 ns and t_end_ns = 5 ns.
+# These frames sample early / middle / late evolution without dumping every frame.
+state_numbers = [1, 50, 100, 150, 200, 255, 318, 377, 450, 502]
+
+[[selected_cases]]
+name = "ep_5p0uj_recoil_1000ms"
+
+[[selected_cases]]
+name = "ep_5p0uj_recoil_3000ms"
+
+[[selected_cases]]
+name = "ep_5p0uj_recoil_5000ms"
+
+[[field_exports]]
+name = "displacement"
+kind = "nodal_displacement"
+enabled = true
+
+[[field_exports]]
+name = "pressure"
+kind = "shell_element_scalar"
+enabled = true
+# LS-PrePost exports the scalar field that is currently selected by the fringe
+# command.  If your local LS-PrePost maps pressure to a different numeric fringe
+# id, open one d3plot manually, select Misc -> pressure, then check lspost.cfile
+# and replace this line with the recorded fringe command.
+fringe_command = "fringe 1"
+component_hint = "Misc -> pressure"
+

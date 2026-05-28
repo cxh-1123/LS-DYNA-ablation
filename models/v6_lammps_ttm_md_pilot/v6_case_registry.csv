@@ -1,0 +1,2 @@
+name,Ep_uJ,input_lammps,run_lammps,t_end_ps,notes
+ep_5p0uj,5.0,models/v6_lammps_ttm_md_pilot/ep_5p0uj/in_ep_5p0uj.lammps,true,10.0,Main V2.6/V3B driver case; above TTM vapor threshold in V1.6 scan.
