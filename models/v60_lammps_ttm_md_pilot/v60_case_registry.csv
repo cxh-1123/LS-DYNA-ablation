@@ -1,0 +1,3 @@
+name,mode,input_file,Te_init_file,run_lammps_hint,atoms_expected,absorbed_fluence_J_cm2,production_ps,dump_interval_ps,notes
+equil_300K,md_equilibration,models/v60_lammps_ttm_md_pilot/v60_equil_300K.in,models/v60_lammps_ttm_md_pilot/v60_equil_300K_Te_init.dat,true,32256,0.0649612,20,0.5,"No laser/TTM production; confirms Si slab, SW potential, and dump path."
+ttm_initial_pulse_5uj_equiv,ttm_initial_pulse,models/v60_lammps_ttm_md_pilot/v60_ttm_initial_pulse_5uj_equiv.in,models/v60_lammps_ttm_md_pilot/v60_ttm_initial_pulse_5uj_equiv_Te_init.dat,true,32256,0.0649612,20,0.5,TTM transfer pilot: initializes hot surface electrons from 5 uJ-equivalent absorbed fluence.

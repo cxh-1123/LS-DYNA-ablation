@@ -1,0 +1,304 @@
+"""
+build_v60_lammps_ttm_md_pilot.py
+================================
+
+Generate a small LAMMPS V6A TTM-MD pilot for silicon laser ablation.
+
+Run from project root:
+    python scripts\\build_v60_lammps_ttm_md_pilot.py
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import math
+import sys
+from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover
+    import tomli as tomllib  # type: ignore
+
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
+
+def load_toml(path: Path) -> dict:
+    with path.open("rb") as f:
+        return tomllib.load(f)
+
+
+def steps(duration_ps: float, timestep_ps: float) -> int:
+    return max(1, int(round(duration_ps / timestep_ps)))
+
+
+def absorbed_fluence_j_cm2(Ep_uJ: float, absorption: float, spot_radius_um: float) -> float:
+    energy_j = Ep_uJ * 1.0e-6 * absorption
+    area_m2 = math.pi * (spot_radius_um * 1.0e-6) ** 2
+    return energy_j / area_m2 / 1.0e4
+
+
+def time_label(ps: float) -> str:
+    if ps < 1000.0:
+        return f"{ps:g} ps"
+    return f"{ps / 1000.0:g} ns"
+
+
+def electron_temperature_lines(cfg: dict, case: dict) -> list[str]:
+    grid = cfg["ttm_grid"]
+    nz = int(grid["nz"])
+    nx = int(grid["nx"])
+    ny = int(grid["ny"])
+    base = float(case.get("initial_electron_temperature_K", 300.0))
+    surface = float(case.get("surface_electron_temperature_K", base))
+    absorption_depth_A = float(cfg["laser_mapping"]["absorption_depth_nm"]) * 10.0
+    cell_height_A = (
+        (float(cfg["geometry"]["nz_cells"]) + float(cfg["geometry"]["vacuum_cells_z"]))
+        * float(cfg["geometry"]["lattice_constant_A"])
+        / nz
+    )
+    lines = [
+        "# UNITS: metal COMMENT: V6A initial electron temperature grid",
+        "# ix iy iz Te_K",
+    ]
+    for ix in range(1, nx + 1):
+        for iy in range(1, ny + 1):
+            for iz in range(1, nz + 1):
+                depth_from_surface_A = max(0.0, (iz - 0.5) * cell_height_A)
+                if case["mode"] == "ttm_initial_pulse":
+                    Te = base + (surface - base) * math.exp(-depth_from_surface_A / absorption_depth_A)
+                else:
+                    Te = base
+                lines.append(f"{ix:d} {iy:d} {iz:d} {Te:.6f}")
+    return lines
+
+
+def ttm_mod_parameter_lines(cfg: dict) -> list[str]:
+    ttm = cfg["ttm_parameters"]
+    laser = cfg["laser_mapping"]
+    geom = cfg["geometry"]
+    fluence = absorbed_fluence_j_cm2(
+        float(laser["Ep_uJ"]),
+        float(laser["absorption_A"]),
+        float(laser["spot_radius_um"]),
+    )
+    # Convert absorbed fluence / pulse width to a pilot surface intensity in
+    # metal units.  This file is provided for V6B ttm/mod calibration.
+    intensity_ev_ps_A2 = (fluence * 6.241509e-4) / float(laser["pulse_width_ps"])
+    n_ion_A3 = 8.0 / (float(geom["lattice_constant_A"]) ** 3)
+    return [
+        "# a_0",
+        "0.0",
+        "# a_1",
+        "0.0",
+        "# a_2",
+        "0.0",
+        "# a_3",
+        "0.0",
+        "# a_4",
+        "0.0",
+        "# C_0",
+        f"{float(ttm['C_e']):.8g}",
+        "# A",
+        "1.0",
+        "# rho_e",
+        f"{float(ttm['rho_e']):.8g}",
+        "# D_e",
+        "10.0",
+        "# gamma_p",
+        f"{float(ttm['gamma_p']):.8g}",
+        "# gamma_s",
+        f"{float(ttm['gamma_s']):.8g}",
+        "# v_0",
+        f"{float(ttm['v_0']):.8g}",
+        "# I_0",
+        f"{intensity_ev_ps_A2:.8e}",
+        "# lsurface",
+        "1",
+        "# rsurface",
+        f"{int(cfg['ttm_grid']['nz'])}",
+        "# l_skin",
+        f"{float(laser['absorption_depth_nm']) * 10.0:.8g}",
+        "# tau",
+        f"{float(laser['pulse_width_ps']):.8g}",
+        "# B",
+        "0.0",
+        "# lambda",
+        "10.0",
+        "# n_ion",
+        f"{n_ion_A3:.8g}",
+        "# surface_movement",
+        "0",
+        "# T_e_min",
+        "300.0",
+    ]
+
+
+def lammps_input_text(cfg: dict, case: dict) -> str:
+    geom = cfg["geometry"]
+    groups = cfg["groups"]
+    mat = cfg["material"]
+    run = cfg["run_control"]
+    grid = cfg["ttm_grid"]
+    ttm = cfg["ttm_parameters"]
+
+    nx = int(geom["nx_cells"])
+    ny = int(geom["ny_cells"])
+    nz = int(geom["nz_cells"])
+    nz_box = nz + int(geom["vacuum_cells_z"])
+    alat = float(geom["lattice_constant_A"])
+    dt = float(run["timestep_ps"])
+    eq_steps = steps(float(run["equilibration_ps"]), dt)
+    prod_steps = steps(float(run["production_ps"]), dt)
+    dump_steps = steps(float(run["dump_interval_ps"]), dt)
+    thermo_steps = int(run["thermo_interval_steps"])
+    mobile_lo = float(groups["bottom_fixed_thickness_A"])
+    thermo_hi = mobile_lo + float(groups["bottom_thermostat_thickness_A"])
+    mode = case["mode"]
+    has_ttm = mode == "ttm_initial_pulse"
+
+    lines = [
+        "# V6A LAMMPS TTM-MD silicon slab pilot",
+        f"# case: {case['name']}",
+        "# Generated by scripts/build_v60_lammps_ttm_md_pilot.py",
+        "",
+        "units           metal",
+        "dimension       3",
+        "boundary        p p p",
+        "atom_style      atomic",
+        "",
+        f"variable        alat equal {alat:.6f}",
+        f"lattice         diamond ${{alat}}",
+        f"region          box block 0 {nx} 0 {ny} 0 {nz_box} units lattice",
+        "create_box      1 box",
+        f"region          si block 0 {nx} 0 {ny} 0 {nz} units lattice",
+        "create_atoms    1 region si",
+        "",
+        f"mass            1 {float(mat['mass_amu']):.6f}",
+        f"pair_style      {mat['pair_style']}",
+        f"pair_coeff      * * {mat['pair_coeff_file']} Si",
+        "",
+        "neighbor        2.0 bin",
+        "neigh_modify    delay 0 every 1 check yes",
+        "",
+        f"region          bottom block INF INF INF INF INF {mobile_lo:.6f} units box",
+        f"region          bath block INF INF INF INF {mobile_lo:.6f} {thermo_hi:.6f} units box",
+        "group           bottom region bottom",
+        "group           bath region bath",
+        "group           mobile subtract all bottom",
+        "",
+        "compute         peatom all pe/atom",
+        "compute         keatom all ke/atom",
+        "compute         satom all stress/atom NULL",
+        "",
+        f"timestep        {dt:.8f}",
+        f"velocity        mobile create {float(case['initial_atomic_temperature_K']):.3f} 4928459 mom yes rot yes dist gaussian",
+        "velocity        bottom set 0.0 0.0 0.0",
+        "fix             hold bottom setforce 0.0 0.0 0.0",
+    ]
+    if cfg["run_control"].get("minimize", True):
+        lines += [
+            "",
+            "min_style       cg",
+            "minimize        1.0e-8 1.0e-10 500 5000",
+        ]
+    lines += [
+        "",
+        "fix             nve mobile nve",
+        "fix             bathfix bath langevin 300.0 300.0 0.1 827364 zero yes",
+        f"thermo          {thermo_steps}",
+        "thermo_style    custom step time temp pe ke etotal press",
+        f"run             {eq_steps}",
+        "unfix           bathfix",
+    ]
+    if has_ttm:
+        lines += [
+            "",
+            "# TTM atomic-electron coupling. Requires a LAMMPS build with EXTRA-FIX.",
+            "# For full laser-source ablation, V6B should switch this to fix ttm/mod",
+            "# with the generated v60_ttm_mod_parameters.txt file.",
+            (
+                "fix             ttm all ttm "
+                f"{int(grid['seed'])} {float(ttm['C_e']):.8g} {float(ttm['rho_e']):.8g} "
+                f"{float(ttm['kappa_e']):.8g} {float(ttm['gamma_p']):.8g} "
+                f"{float(ttm['gamma_s']):.8g} {float(ttm['v_0']):.8g} "
+                f"{int(grid['nx'])} {int(grid['ny'])} {int(grid['nz'])} "
+                f"infile v60_{case['name']}_Te_init.dat outfile {dump_steps} Te_out"
+            ),
+        ]
+    lines += [
+        "",
+        "dump            atomdump all custom "
+        f"{dump_steps} dump.v60_{case['name']}.lammpstrj "
+        "id type x y z vx vy vz c_keatom c_peatom "
+        "c_satom[1] c_satom[2] c_satom[3] c_satom[4] c_satom[5] c_satom[6]",
+        "dump_modify     atomdump sort id",
+        f"run             {prod_steps}",
+        "",
+        "write_data      final.v60_" + case["name"] + ".data",
+        "",
+    ]
+    if has_ttm:
+        lines.append("unfix           ttm")
+    lines += [
+        "unfix           nve",
+        "unfix           hold",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def main() -> int:
+    project_root = Path(__file__).resolve().parents[1]
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--toml", type=Path, default=project_root / "config" / "v60_lammps_ttm_md_pilot.toml")
+    ap.add_argument("--out-dir", type=Path, default=project_root / "models" / "v60_lammps_ttm_md_pilot")
+    args = ap.parse_args()
+
+    cfg = load_toml(args.toml)
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+
+    registry: list[dict[str, str]] = []
+    for case in cfg["selected_cases"]:
+        case_name = str(case["name"])
+        in_path = args.out_dir / f"v60_{case_name}.in"
+        te_path = args.out_dir / f"v60_{case_name}_Te_init.dat"
+        in_path.write_text(lammps_input_text(cfg, case), encoding="utf-8")
+        te_path.write_text("\n".join(electron_temperature_lines(cfg, case)) + "\n", encoding="utf-8")
+        registry.append({
+            "name": case_name,
+            "mode": str(case["mode"]),
+            "input_file": str(in_path.relative_to(project_root)).replace("\\", "/"),
+            "Te_init_file": str(te_path.relative_to(project_root)).replace("\\", "/"),
+            "run_lammps_hint": str(case.get("run_lammps_hint", True)).lower(),
+            "atoms_expected": str(int(cfg["geometry"]["nx_cells"]) * int(cfg["geometry"]["ny_cells"]) * int(cfg["geometry"]["nz_cells"]) * 8),
+            "absorbed_fluence_J_cm2": f"{absorbed_fluence_j_cm2(float(cfg['laser_mapping']['Ep_uJ']), float(cfg['laser_mapping']['absorption_A']), float(cfg['laser_mapping']['spot_radius_um'])):.6g}",
+            "production_ps": f"{float(cfg['run_control']['production_ps']):.6g}",
+            "dump_interval_ps": f"{float(cfg['run_control']['dump_interval_ps']):.6g}",
+            "notes": str(case.get("notes", "")),
+        })
+
+    mod_path = args.out_dir / "v60_ttm_mod_parameters.txt"
+    mod_path.write_text("\n".join(ttm_mod_parameter_lines(cfg)) + "\n", encoding="utf-8")
+
+    reg_path = args.out_dir / "v60_case_registry.csv"
+    with reg_path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=list(registry[0].keys()))
+        writer.writeheader()
+        writer.writerows(registry)
+
+    print(f"[OK] {reg_path}")
+    print(f"[OK] {mod_path}")
+    for row in registry:
+        print(f"[OK] {row['input_file']} atoms={row['atoms_expected']} mode={row['mode']}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

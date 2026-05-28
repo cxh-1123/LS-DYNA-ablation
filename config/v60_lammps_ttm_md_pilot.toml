@@ -1,0 +1,86 @@
+# =============================================================================
+# V6.0 -- LAMMPS TTM-MD pilot for atomistic Si ablation
+#
+# Purpose:
+#   Start a physically traceable LAMMPS TTM-MD workflow from the current V5A
+#   LS-DYNA ejecta-marker state.  V6A is deliberately small and verifiable.
+#
+# LAMMPS units:
+#   units metal: distance Angstrom, time ps, energy eV, temperature K.
+# =============================================================================
+
+[meta]
+description = "V6A small Si slab TTM-MD pilot for explicit atomistic ejecta workflow."
+stage = "V6A"
+
+[geometry]
+# Conventional cubic diamond cells.  Silicon lattice constant is 5.431 A.
+# Atom count = nx * ny * nz * 8 for diamond conventional cells.
+nx_cells = 12
+ny_cells = 12
+nz_cells = 28
+vacuum_cells_z = 28
+lattice_constant_A = 5.431
+
+[groups]
+bottom_fixed_thickness_A = 8.0
+bottom_thermostat_thickness_A = 12.0
+
+[material]
+atom_type = 1
+mass_amu = 28.0855
+pair_style = "sw"
+pair_coeff_file = "Si.sw"
+
+[run_control]
+timestep_ps = 0.00025
+minimize = true
+equilibration_ps = 2.0
+production_ps = 20.0
+dump_interval_ps = 0.5
+thermo_interval_steps = 200
+
+[ttm_grid]
+# TTM fixes require an orthogonal 3D periodic box.  The vacuum is modeled as
+# empty atom space inside the periodic box.  V6B/V6C should move to ttm/mod or
+# ttm/thermal for a better laser source and vacuum-electron handling.
+nx = 4
+ny = 4
+nz = 28
+seed = 24681357
+
+[ttm_parameters]
+# Conservative pilot values for testing the workflow, not final calibrated Si.
+# Calibrate against literature before using quantitatively.
+C_e = 1.0
+rho_e = 1.0
+kappa_e = 10.0
+gamma_p = 0.1
+gamma_s = 0.0
+v_0 = 2.0
+
+[laser_mapping]
+source_from = "V17/V26/V50 5 uJ, absorption_A=0.5, spot_radius_um=35"
+Ep_uJ = 5.0
+absorption_A = 0.5
+spot_radius_um = 35.0
+# Computed by builder and written to registry: absorbed fluence in J/cm^2.
+absorption_depth_nm = 10.0
+pulse_width_ps = 30.0
+
+[[selected_cases]]
+name = "equil_300K"
+mode = "md_equilibration"
+initial_atomic_temperature_K = 300.0
+initial_electron_temperature_K = 300.0
+run_lammps_hint = true
+notes = "No laser/TTM production; confirms Si slab, SW potential, and dump path."
+
+[[selected_cases]]
+name = "ttm_initial_pulse_5uj_equiv"
+mode = "ttm_initial_pulse"
+initial_atomic_temperature_K = 300.0
+initial_electron_temperature_K = 300.0
+surface_electron_temperature_K = 9000.0
+run_lammps_hint = true
+notes = "TTM transfer pilot: initializes hot surface electrons from 5 uJ-equivalent absorbed fluence."

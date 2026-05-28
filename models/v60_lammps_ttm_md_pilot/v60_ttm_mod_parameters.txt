@@ -1,0 +1,44 @@
+# a_0
+0.0
+# a_1
+0.0
+# a_2
+0.0
+# a_3
+0.0
+# a_4
+0.0
+# C_0
+1
+# A
+1.0
+# rho_e
+1
+# D_e
+10.0
+# gamma_p
+0.1
+# gamma_s
+0
+# v_0
+2
+# I_0
+1.35151974e-06
+# lsurface
+1
+# rsurface
+28
+# l_skin
+100
+# tau
+30
+# B
+0.0
+# lambda
+10.0
+# n_ion
+0.049940235
+# surface_movement
+0
+# T_e_min
+300.0
