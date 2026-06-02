@@ -1,0 +1,78 @@
+# V8 TTM-MD periodic slab diagnostic, not strict free-surface ablation
+# case: fluence_0p5_30ps_ttm_periodic_slab_diagnostic
+# fix ttm/mod requires fully periodic boundaries; this case verifies
+# electron-lattice coupling and temperature evolution only.
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+
+variable        alat equal 5.431000
+lattice         diamond ${alat}
+region          box block 0 19 0 19 0 100 units lattice
+create_box      1 box
+region          si block 0 19 0 19 0 55 units lattice
+create_atoms    1 region si
+
+mass            1 28.085500
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+neighbor        2.0 bin
+neigh_modify    every 5 delay 0 check yes
+
+region          bottom block INF INF INF INF INF 8.000000 units box
+region          bath block INF INF INF INF 8.000000 20.000000 units box
+group           bottom region bottom
+group           bath region bath
+group           mobile subtract all bottom
+
+compute         peatom all pe/atom
+compute         keatom all ke/atom
+compute         satom all stress/atom NULL
+
+timestep        0.00100000
+velocity        mobile create 300.0 4928459 mom yes rot yes dist gaussian
+velocity        bottom set 0.0 0.0 0.0
+fix             hold bottom setforce 0.0 0.0 0.0
+
+min_style       cg
+minimize        1.0e-8 1.0e-10 500 5000
+
+fix             nve mobile nve
+fix             bathfix bath langevin 300.0 300.0 1.000000 827364 zero yes
+thermo          1000
+thermo_style    custom step time temp pe ke etotal press
+run             2000
+unfix           bathfix
+reset_timestep  0
+
+fix             twotemp all ttm/mod 97531864 v80_fluence_0p5_30ps_ttm_periodic_slab_diagnostic.ttm_mod 10 10 80 set 300.000 outfile 1000 Te_out
+
+variable        vz_atom atom vz
+variable        z_atom atom z
+compute         max_ke all reduce max c_keatom
+compute         max_vz all reduce max v_vz_atom
+compute         zmax all reduce max v_z_atom
+thermo          1000
+thermo_style    custom step time temp pe ke etotal press c_max_ke c_max_vz c_zmax
+restart         10000 restart.v80_fluence_0p5_30ps_ttm_periodic_slab_diagnostic.1 restart.v80_fluence_0p5_30ps_ttm_periodic_slab_diagnostic.2
+dump            atomdump_early all custom 1000 dump.v80_fluence_0p5_30ps_ttm_periodic_slab_diagnostic.early.lammpstrj id type x y z vx vy vz c_keatom c_peatom c_satom[1] c_satom[2] c_satom[3] c_satom[4] c_satom[5] c_satom[6]
+dump_modify     atomdump_early sort id
+run             30000
+undump          atomdump_early
+dump            atomdump_late all custom 5000 dump.v80_fluence_0p5_30ps_ttm_periodic_slab_diagnostic.late.lammpstrj id type x y z vx vy vz c_keatom c_peatom c_satom[1] c_satom[2] c_satom[3] c_satom[4] c_satom[5] c_satom[6]
+dump_modify     atomdump_late sort id
+run             0
+undump          atomdump_late
+
+write_data      final.v80_fluence_0p5_30ps_ttm_periodic_slab_diagnostic.data
+
+uncompute       max_ke
+uncompute       max_vz
+uncompute       zmax
+unfix           nve
+unfix           hold
+
+unfix           twotemp

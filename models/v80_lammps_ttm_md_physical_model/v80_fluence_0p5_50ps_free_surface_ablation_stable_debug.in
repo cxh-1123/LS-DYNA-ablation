@@ -1,0 +1,135 @@
+# V8 free-surface ablation morphology case
+# case: fluence_0p5_50ps_free_surface_ablation_stable_debug
+# boundary p p fs, no fix ttm/mod.
+# z lower face is fixed; z upper face shrink-wraps so ejecta is not lost.
+# Main result for surface height, crater, ejecta and plume visualization.
+
+units           metal
+dimension       3
+boundary        p p fs
+atom_style      atomic
+
+variable        alat equal 5.431000
+lattice         diamond ${alat}
+region          box block 0 19 0 19 0 100 units lattice
+create_box      1 box
+region          si block 0 19 0 19 0 55 units lattice
+create_atoms    1 region si
+
+mass            1 28.085500
+pair_style      sw
+pair_coeff      * * Si.sw Si
+
+neighbor        2.0 bin
+neigh_modify    every 5 delay 0 check yes
+
+region          bottom block INF INF INF INF INF 8.000000 units box
+region          bath block INF INF INF INF 8.000000 20.000000 units box
+group           bottom region bottom
+group           bath region bath
+group           mobile subtract all bottom
+
+compute         peatom all pe/atom
+compute         keatom all ke/atom
+compute         satom all stress/atom NULL
+
+timestep        0.00050000
+velocity        mobile create 300.0 4928459 mom yes rot yes dist gaussian
+velocity        bottom set 0.0 0.0 0.0
+fix             hold bottom setforce 0.0 0.0 0.0
+
+min_style       cg
+minimize        1.0e-8 1.0e-10 500 5000
+
+fix             nve mobile nve
+fix             bathfix bath langevin 300.0 300.0 1.000000 827364 zero yes
+thermo          500
+thermo_style    custom step time temp pe ke etotal press
+run             4000
+unfix           bathfix
+reset_timestep  0
+
+# Equivalent free-surface laser heat source.
+# This is not fix ttm/mod.  It deposits a calibrated fraction of absorbed
+# Beer-Lambert energy directly into near-surface lattice kinetic energy.
+# heat_scale=1, n_layers=10, dz_A=10, delta_A=100
+# Per-layer peak-rate caps applied at build time via max_step_eV / (norm*dt).
+variable        pulse equal 0.0313145759567*exp(-0.5*((time-15)/12.7398270043)^2)
+region          heat_01 block INF INF INF INF 288.705000 298.705000 units box
+group           heat_01 region heat_01
+variable        qheat_01 equal 48775.0064256*v_pulse
+fix             heatfix_01 heat_01 heat 1 v_qheat_01
+region          heat_02 block INF INF INF INF 278.705000 288.705000 units box
+group           heat_02 region heat_02
+variable        qheat_02 equal 44133.4508788*v_pulse
+fix             heatfix_02 heat_02 heat 1 v_qheat_02
+region          heat_03 block INF INF INF INF 268.705000 278.705000 units box
+group           heat_03 region heat_03
+variable        qheat_03 equal 39933.5977422*v_pulse
+fix             heatfix_03 heat_03 heat 1 v_qheat_03
+region          heat_04 block INF INF INF INF 258.705000 268.705000 units box
+group           heat_04 region heat_04
+variable        qheat_04 equal 36133.4134739*v_pulse
+fix             heatfix_04 heat_04 heat 1 v_qheat_04
+region          heat_05 block INF INF INF INF 248.705000 258.705000 units box
+group           heat_05 region heat_05
+variable        qheat_05 equal 32694.8645526*v_pulse
+fix             heatfix_05 heat_05 heat 1 v_qheat_05
+region          heat_06 block INF INF INF INF 238.705000 248.705000 units box
+group           heat_06 region heat_06
+variable        qheat_06 equal 29583.5368248*v_pulse
+fix             heatfix_06 heat_06 heat 1 v_qheat_06
+region          heat_07 block INF INF INF INF 228.705000 238.705000 units box
+group           heat_07 region heat_07
+variable        qheat_07 equal 26768.2910769*v_pulse
+fix             heatfix_07 heat_07 heat 1 v_qheat_07
+region          heat_08 block INF INF INF INF 218.705000 228.705000 units box
+group           heat_08 region heat_08
+variable        qheat_08 equal 24220.9513833*v_pulse
+fix             heatfix_08 heat_08 heat 1 v_qheat_08
+region          heat_09 block INF INF INF INF 208.705000 218.705000 units box
+group           heat_09 region heat_09
+variable        qheat_09 equal 21916.023112*v_pulse
+fix             heatfix_09 heat_09 heat 1 v_qheat_09
+region          heat_10 block INF INF INF INF 198.705000 208.705000 units box
+group           heat_10 region heat_10
+variable        qheat_10 equal 19830.4377663*v_pulse
+fix             heatfix_10 heat_10 heat 1 v_qheat_10
+
+
+variable        vz_atom atom vz
+variable        z_atom atom z
+compute         max_ke all reduce max c_keatom
+compute         max_vz all reduce max v_vz_atom
+compute         zmax all reduce max v_z_atom
+thermo          500
+thermo_style    custom step time temp pe ke etotal press c_max_ke c_max_vz c_zmax
+restart         20000 restart.v80_fluence_0p5_50ps_free_surface_ablation_stable_debug.1 restart.v80_fluence_0p5_50ps_free_surface_ablation_stable_debug.2
+dump            atomdump_early all custom 2000 dump.v80_fluence_0p5_50ps_free_surface_ablation_stable_debug.early.lammpstrj id type x y z vx vy vz c_keatom c_peatom c_satom[1] c_satom[2] c_satom[3] c_satom[4] c_satom[5] c_satom[6]
+dump_modify     atomdump_early sort id
+run             100000
+undump          atomdump_early
+dump            atomdump_late all custom 4000 dump.v80_fluence_0p5_50ps_free_surface_ablation_stable_debug.late.lammpstrj id type x y z vx vy vz c_keatom c_peatom c_satom[1] c_satom[2] c_satom[3] c_satom[4] c_satom[5] c_satom[6]
+dump_modify     atomdump_late sort id
+run             0
+undump          atomdump_late
+
+write_data      final.v80_fluence_0p5_50ps_free_surface_ablation_stable_debug.data
+
+uncompute       max_ke
+uncompute       max_vz
+uncompute       zmax
+unfix           nve
+unfix           hold
+
+unfix           heatfix_01
+unfix           heatfix_02
+unfix           heatfix_03
+unfix           heatfix_04
+unfix           heatfix_05
+unfix           heatfix_06
+unfix           heatfix_07
+unfix           heatfix_08
+unfix           heatfix_09
+unfix           heatfix_10
+

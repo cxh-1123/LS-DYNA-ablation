@@ -1,0 +1,4 @@
+name,fluence_J_cm2,I0_eV_ps_A2,pulse_width_ps,production_ps,input_file,ttm_mod_file,run_lammps_hint,atoms_expected,notes
+fluence_0p2_100ps,0.2,0.0083220121,30,100,models/v61_lammps_ttm_mod_ablation_scan/v61_fluence_0p2_100ps.in,models/v61_lammps_ttm_mod_ablation_scan/v61_fluence_0p2_100ps.ttm_mod,true,12288,Stable ttm/mod scout: low-fluence heating check.
+fluence_0p5_100ps,0.5,0.02080503,30,100,models/v61_lammps_ttm_mod_ablation_scan/v61_fluence_0p5_100ps.in,models/v61_lammps_ttm_mod_ablation_scan/v61_fluence_0p5_100ps.ttm_mod,true,12288,Stable ttm/mod scout: melt-threshold candidate after calibration.
+fluence_1p0_100ps,1,0.04161006,30,100,models/v61_lammps_ttm_mod_ablation_scan/v61_fluence_1p0_100ps.in,models/v61_lammps_ttm_mod_ablation_scan/v61_fluence_1p0_100ps.ttm_mod,true,12288,Stable ttm/mod scout: high candidate; monitor electron temperature.

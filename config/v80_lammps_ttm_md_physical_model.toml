@@ -1,0 +1,226 @@
+# =============================================================================
+# V8 -- Si TTM-MD physical model update
+#
+# Purpose:
+#   Replace the V6B debug-size scout assumptions with an explicit Si-focused
+#   physical setup: incident/absorbed fluence, reflectivity, optical penetration
+#   depth, 30 ps FWHM laser pulse, larger cell presets, 300 ps observation, and
+#   outputs needed by V8 diagnostics.
+#
+# Units:
+#   LAMMPS metal: Angstrom, ps, eV, K, bar.
+# =============================================================================
+
+[meta]
+description = "V8 Si TTM-MD physical model update after V7 diagnostics."
+stage = "V8"
+
+[material]
+mass_amu = 28.0855
+pair_style = "sw"
+pair_coeff_file = "Si.sw"
+Tm_K = 1687.0
+Tv_reference_K = 3538.0
+Tc_reference_K = 5159.0
+
+[potential_warning]
+message = "Stillinger-Weber Si is a useful baseline for crystalline/liquid Si, but high-temperature vapor, cluster emission, ionization, and nonthermal bond softening require validation."
+
+[ttm_parameters_si]
+# Baseline numerical form follows the LAMMPS Si.ttm_mod example.  Values are
+# kept explicit so they can be replaced with literature-validated Si data.
+source = "LAMMPS 22Jul2025 Examples/ttm/Si.ttm_mod baseline; validate before paper use."
+a_0 = -0.00012899
+a_1 = -0.0000000293276
+a_2 = -0.0000229991
+a_3 = -0.000000927036
+a_4 = -0.0000011747
+C_0 = 0.000129
+A = 0.180501
+rho_e = 0.05
+D_e = 20000.0
+gamma_p = 24.443
+gamma_s = 39.235
+v_0 = 79.76
+B = 0.0
+lambda = 0.0
+n_ion = 0.05
+surface_movement = 0
+T_e_min = 300.0
+
+[nonthermal_softening]
+enable_nonthermal_softening = false
+Te_threshold_K = 12000.0
+softened_melt_factor = 0.8
+note = "Phenomenological approximation only; default off."
+
+[laser]
+fluence_type = "incident"
+reflectivity_R = 0.35
+optical_penetration_depth_nm = 10.0
+pulse_fwhm_ps = 30.0
+pulse_center_ps = 15.0
+intensity_scale = 0.002
+free_surface_lattice_deposition_fraction = 0.15
+free_surface_heat_layers = 10
+free_surface_heat_layer_thickness_A = 10.0
+# Global multiplier for free-surface lattice heat deposition (case may override).
+heat_scale = 1.0
+# Keep 0.0 for current LAMMPS compatibility.  Older/current builds can reject
+# min()/ternary-style equal variables, so per-step heat caps should be handled
+# by reducing the lattice deposition fraction or by a segmented run, not by an
+# inline variable expression.
+free_surface_max_layer_energy_per_step_eV = 0.0
+wavelength_note = "Use the penetration depth appropriate to the experimental wavelength; current value is a placeholder."
+
+[run_control]
+timestep_ps = 0.001
+minimize = true
+equilibration_ps = 2.0
+thermo_interval_steps = 1000
+dump_interval_early_ps = 1.0
+dump_interval_late_ps = 5.0
+early_window_end_ps = 100.0
+total_time_ps = 300.0
+restart_interval_ps = 10.0
+
+[ttm_grid]
+seed = 97531864
+initial_electron_temperature_K = 300.0
+
+[boundary]
+x = "periodic"
+y = "periodic"
+z_ttm_diagnostic = "periodic vacuum slab required by LAMMPS fix ttm/mod"
+z_free_surface = "lower fixed, upper shrink-wrapped non-periodic z boundary for ablation morphology"
+free_surface_lammps_boundary = "p p fs"
+bottom_fixed_thickness_A = 8.0
+bottom_thermostat_thickness_A = 12.0
+bottom_langevin_damping_ps = 1.0
+note = "TTM diagnostic uses p p p because fix ttm/mod rejects non-periodic boundaries.  Free-surface ablation uses p p fs and does not use fix ttm/mod; z lower face is fixed, z upper face shrink-wraps to avoid lost atoms during ejecta motion."
+
+[sizes.debug]
+nx_cells = 8
+ny_cells = 8
+nz_cells = 24
+vacuum_cells_z = 36
+lattice_constant_A = 5.431
+grid_nx = 4
+grid_ny = 4
+grid_nz = 40
+role = "fast debug only; not a paper main result"
+
+[sizes.small_physical]
+nx_cells = 19
+ny_cells = 19
+nz_cells = 55
+vacuum_cells_z = 45
+lattice_constant_A = 5.431
+grid_nx = 10
+grid_ny = 10
+grid_nz = 80
+role = "first physically meaningful diagnostic: about 10 nm lateral, 30 nm Si depth, 24 nm vacuum"
+
+[sizes.paper_style]
+nx_cells = 38
+ny_cells = 38
+nz_cells = 75
+vacuum_cells_z = 75
+lattice_constant_A = 5.431
+grid_nx = 18
+grid_ny = 18
+grid_nz = 120
+role = "expensive paper-style candidate: about 20 nm lateral and 40 nm Si depth"
+
+[[selected_cases]]
+name = "fluence_0p5_30ps_ttm_periodic_slab_diagnostic"
+size = "small_physical"
+case_mode = "ttm_periodic_slab_diagnostic"
+incident_fluence_J_cm2 = 0.5
+production_ps = 30.0
+run_lammps_hint = true
+notes = "TTM-MD periodic slab diagnostic, not strict free-surface ablation. Verifies electron-lattice coupling and temperature evolution only."
+
+[[selected_cases]]
+name = "fluence_0p5_20ps_free_surface_ablation_debug"
+size = "small_physical"
+case_mode = "free_surface_ablation"
+incident_fluence_J_cm2 = 0.5
+production_ps = 20.0
+timestep_ps = 0.0005
+thermo_interval_steps = 500
+dump_interval_early_ps = 0.5
+dump_interval_late_ps = 1.0
+run_lammps_hint = false
+notes = "Short stability debug after lost-atoms at 15 ps. Uses p p fs, no fix ttm/mod, 0.0005 ps timestep, and a smooth 0-30 ps Gaussian heat pulse."
+
+[[selected_cases]]
+name = "fluence_0p5_20ps_free_surface_ablation_debug_weaker_heat"
+size = "small_physical"
+case_mode = "free_surface_ablation"
+incident_fluence_J_cm2 = 0.5
+production_ps = 20.0
+timestep_ps = 0.0005
+thermo_interval_steps = 500
+dump_interval_early_ps = 0.5
+dump_interval_late_ps = 1.0
+heat_scale = 0.3
+free_surface_heat_layers = 5
+free_surface_heat_layer_thickness_A = 10.0
+optical_penetration_depth_nm = 3.0
+free_surface_layer_max_step_eV = [35.0, 28.0, 22.0, 16.0, 10.0]
+run_lammps_hint = true
+notes = "Weaker/shallower 20 ps free-surface debug: heat_scale=0.3, 5 layers over 0-5 nm, per-layer step caps, p p fs, no fix ttm/mod, dt=0.0005 ps."
+
+[[selected_cases]]
+name = "fluence_0p5_20ps_free_surface_ablation_debug_weaker_heat_v2"
+size = "small_physical"
+case_mode = "free_surface_ablation"
+incident_fluence_J_cm2 = 0.5
+production_ps = 20.0
+timestep_ps = 0.0005
+thermo_interval_steps = 500
+dump_interval_early_ps = 0.5
+dump_interval_late_ps = 1.0
+heat_scale = 0.2
+free_surface_heat_layers = 5
+free_surface_heat_layer_thickness_A = 10.0
+optical_penetration_depth_nm = 3.0
+free_surface_layer_max_step_eV = [20.0, 15.0, 12.0, 10.0, 8.0]
+run_lammps_hint = true
+notes = "Weaker heat v2: heat_scale=0.2, 5 layers 0-5 nm, tighter caps [20,15,12,10,8] eV/step, target heated p95 <= 5000 K at 20 ps."
+
+[[selected_cases]]
+name = "fluence_0p5_50ps_free_surface_ablation_stable_debug"
+size = "small_physical"
+case_mode = "free_surface_ablation"
+incident_fluence_J_cm2 = 0.5
+production_ps = 50.0
+timestep_ps = 0.0005
+thermo_interval_steps = 500
+dump_interval_early_ps = 1.0
+dump_interval_late_ps = 2.0
+run_lammps_hint = false
+notes = "Intermediate stability debug. Run only after the 20 ps case has no lost atoms or nonphysical KE/vz spikes."
+
+[[selected_cases]]
+name = "fluence_0p5_100ps_free_surface_ablation_quickcheck"
+size = "small_physical"
+case_mode = "free_surface_ablation"
+incident_fluence_J_cm2 = 0.5
+production_ps = 100.0
+timestep_ps = 0.0005
+thermo_interval_steps = 1000
+dump_interval_early_ps = 1.0
+dump_interval_late_ps = 5.0
+run_lammps_hint = false
+notes = "Intermediate free-surface quickcheck before the expensive 300 ps case. Uses p p fs, no fix ttm/mod, smaller timestep, and smooth Beer-Lambert lattice heating."
+
+[[selected_cases]]
+name = "fluence_0p5_300ps_free_surface_ablation"
+size = "small_physical"
+case_mode = "free_surface_ablation"
+incident_fluence_J_cm2 = 0.5
+production_ps = 300.0
+run_lammps_hint = false
+notes = "Main free-surface ablation morphology case. Uses p p fs and an equivalent Beer-Lambert lattice heat source, not fix ttm/mod."

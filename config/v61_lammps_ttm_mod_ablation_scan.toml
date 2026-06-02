@@ -1,0 +1,96 @@
+# =============================================================================
+# V6B -- LAMMPS ttm/mod ablation threshold scout
+#
+# Purpose:
+#   Move beyond V6A's initial hot-electron verification and use LAMMPS
+#   fix ttm/mod with a 30 ps laser pulse.  The goal is to find a physically
+#   plausible path from electron heating -> lattice heating -> melting ->
+#   stress wave -> initial ejecta.
+#
+# LAMMPS units:
+#   metal: Angstrom, ps, eV, K.
+# =============================================================================
+
+[meta]
+description = "V6B LAMMPS ttm/mod laser ablation scout for Si."
+stage = "V6B"
+
+[geometry]
+# Smaller than V6A so 60-100 ps tests are practical.
+nx_cells = 8
+ny_cells = 8
+nz_cells = 24
+vacuum_cells_z = 36
+lattice_constant_A = 5.431
+
+[groups]
+bottom_fixed_thickness_A = 8.0
+bottom_thermostat_thickness_A = 12.0
+
+[material]
+mass_amu = 28.0855
+pair_style = "sw"
+pair_coeff_file = "Si.sw"
+
+[run_control]
+timestep_ps = 0.0001
+minimize = true
+equilibration_ps = 2.0
+dump_interval_ps = 1.0
+thermo_interval_steps = 1000
+
+[ttm_grid]
+nx = 4
+ny = 4
+nz = 40
+seed = 97531864
+initial_electron_temperature_K = 300.0
+
+[ttm_mod_parameters]
+# Baseline from the LAMMPS Si.ttm_mod example shipped with LAMMPS 22Jul2025.
+# The builder rewrites I_0, tau, l_skin, lsurface, and rsurface per case.
+a_0 = -0.00012899
+a_1 = -0.0000000293276
+a_2 = -0.0000229991
+a_3 = -0.000000927036
+a_4 = -0.0000011747
+C_0 = 0.000129
+A = 0.180501
+rho_e = 0.05
+D_e = 20000.0
+gamma_p = 24.443
+gamma_s = 39.235
+v_0 = 79.76
+B = 0.0
+lambda = 0.0
+n_ion = 0.05
+surface_movement = 0
+T_e_min = 300.0
+
+[laser]
+pulse_width_ps = 30.0
+absorption_depth_nm = 10.0
+# If the absolute intensity is too weak/strong, V6B uses this single knob
+# before changing the physics model.
+intensity_scale = 0.002
+
+[[selected_cases]]
+name = "fluence_0p2_100ps"
+fluence_J_cm2 = 0.2
+production_ps = 100.0
+run_lammps_hint = true
+notes = "Stable ttm/mod scout: low-fluence heating check."
+
+[[selected_cases]]
+name = "fluence_0p5_100ps"
+fluence_J_cm2 = 0.5
+production_ps = 100.0
+run_lammps_hint = true
+notes = "Stable ttm/mod scout: melt-threshold candidate after calibration."
+
+[[selected_cases]]
+name = "fluence_1p0_100ps"
+fluence_J_cm2 = 1.0
+production_ps = 100.0
+run_lammps_hint = true
+notes = "Stable ttm/mod scout: high candidate; monitor electron temperature."
