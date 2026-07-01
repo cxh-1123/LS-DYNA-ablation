@@ -1,0 +1,60 @@
+# =============================================================================
+# V4D / V4.3 -- paper-style evolution visualization
+#
+# Purpose:
+#   Generate presentation/figure panels similar to ultrafast ablation papers:
+#   time snapshots, crater/plume proxy, pressure/displacement trends.
+#
+# Important:
+#   This is a proxy visualization built from V4B/V4C metadata and LS-PrePost
+#   peak readings.  It does not parse d3plot binary fields yet.
+# =============================================================================
+
+[meta]
+description = "Paper-style proxy visualization for V4B/V4C dynamic ablation evolution."
+
+[source]
+v42_summary_csv = "lightweight_results/v42_dynamic_recoil_sweep/v42_case_summary.csv"
+v42_registry_csv = "models/v42_dynamic_recoil_sweep/v42_case_registry.csv"
+
+[geometry]
+radius_um = 100.0
+thickness_um = 5.0
+crater_depth_um = 0.05
+
+[visualization]
+case = "ep_5p0uj_recoil_5000ms"
+times_ps = [5, 15, 25, 40, 55, 70, 85]
+out_dir = "figures/v43_paper_style_evolution"
+random_seed = 42
+
+[plume_proxy]
+particle_count = 900
+plume_velocity_m_s = 5000.0
+radial_spread_fraction = 0.42
+temperature_peak_K = 100000.0
+temperature_floor_K = 250.0
+cooling_time_ps = 55.0
+
+# Peak readings manually taken from LS-PrePost screenshots for the V4C sweep.
+# Units: displacement mm, pressure GPa.
+[[observed_peaks]]
+case = "ep_5p0uj_recoil_1000ms"
+recoil_velocity_m_s = -1000.0
+max_displacement_mm = 5.620e-7
+max_pressure_GPa = 8.815e-2
+min_pressure_GPa = -3.460e-2
+
+[[observed_peaks]]
+case = "ep_5p0uj_recoil_3000ms"
+recoil_velocity_m_s = -3000.0
+max_displacement_mm = 1.690e-6
+max_pressure_GPa = 3.024e-1
+min_pressure_GPa = -1.039e-1
+
+[[observed_peaks]]
+case = "ep_5p0uj_recoil_5000ms"
+recoil_velocity_m_s = -5000.0
+max_displacement_mm = 2.847e-6
+max_pressure_GPa = 5.843e-1
+min_pressure_GPa = -1.739e-1
